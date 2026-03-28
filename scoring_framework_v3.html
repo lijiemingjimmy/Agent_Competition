@@ -1,0 +1,317 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans, sans-serif); }
+.wrap { padding: 1.5rem 0; }
+.title-row { display: flex; align-items: baseline; gap: 12px; margin-bottom: 1.5rem; }
+.title-row h2 { font-size: 18px; font-weight: 500; color: var(--color-text-primary); }
+.title-row span { font-size: 13px; color: var(--color-text-secondary); }
+.dim-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+.dim-card {
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  padding: 14px 12px 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  background: var(--color-background-primary);
+}
+.dim-card:hover { border-color: var(--color-border-secondary); background: var(--color-background-secondary); }
+.dim-card.active { border-width: 1.5px; }
+.dim-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.dim-score { font-size: 22px; font-weight: 500; line-height: 1; }
+.dim-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+.dim-sub { font-size: 11px; color: var(--color-text-secondary); line-height: 1.5; }
+.bar-track { height: 4px; border-radius: 2px; background: var(--color-border-tertiary); margin-top: 10px; }
+.bar-fill { height: 4px; border-radius: 2px; }
+
+.detail-panel {
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-background-primary);
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  min-height: 160px;
+}
+.detail-panel h3 { font-size: 15px; font-weight: 500; margin-bottom: 12px; }
+.sub-items { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+.sub-item {
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-md);
+  padding: 10px 12px;
+  background: var(--color-background-secondary);
+}
+.sub-item .sub-score { font-size: 16px; font-weight: 500; margin-bottom: 4px; }
+.sub-item .sub-name { font-size: 12px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+.sub-item .sub-desc { font-size: 11px; color: var(--color-text-secondary); line-height: 1.5; }
+
+/* 步骤给分细则表 */
+.step-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+.step-table th {
+  text-align: left; padding: 7px 10px;
+  background: var(--color-background-secondary);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+}
+.step-table td { padding: 8px 10px; border-bottom: 0.5px solid var(--color-border-tertiary); color: var(--color-text-primary); vertical-align: top; }
+.step-table tr:last-child td { border-bottom: none; }
+.step-table tr:hover td { background: var(--color-background-secondary); }
+.badge { display: inline-block; padding: 2px 8px; border-radius: var(--border-radius-md); font-size: 11px; font-weight: 500; }
+
+.time-section { margin-bottom: 1.5rem; }
+.time-section h3 { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 10px; }
+.time-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.time-card { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 14px 16px; background: var(--color-background-primary); }
+.time-card .tc-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 6px; }
+.time-card .tc-limit { font-size: 24px; font-weight: 500; margin-bottom: 4px; }
+.time-card .tc-desc { font-size: 11px; color: var(--color-text-secondary); line-height: 1.6; }
+.time-card .tc-bar { height: 3px; border-radius: 2px; margin-top: 10px; }
+.overtime-note { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 10px 14px; background: var(--color-background-secondary); font-size: 11px; color: var(--color-text-secondary); line-height: 1.6; }
+.overtime-note strong { color: var(--color-text-primary); font-weight: 500; }
+
+.diff-section { margin-bottom: 1.5rem; }
+.diff-section h3 { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 10px; }
+.diff-row { display: grid; grid-template-columns: 80px 1fr 80px 100px; gap: 10px; align-items: center; margin-bottom: 8px; }
+.diff-badge { padding: 4px 10px; border-radius: var(--border-radius-md); font-size: 12px; font-weight: 500; text-align: center; }
+.diff-bar-wrap { background: var(--color-border-tertiary); border-radius: 3px; height: 8px; }
+.diff-bar { border-radius: 3px; height: 8px; }
+
+.note-box { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 10px 14px; background: var(--color-background-secondary); font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; }
+.note-box strong { color: var(--color-text-primary); font-weight: 500; }
+.total-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); margin-bottom: 1rem; }
+.total-left { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
+.total-right { font-size: 20px; font-weight: 500; color: var(--color-text-primary); }
+</style>
+
+<div class="wrap">
+  <div class="title-row">
+    <h2>智能体大赛评分框架</h2>
+    <span>点击各维度查看细则</span>
+  </div>
+
+  <div class="dim-grid" id="dimGrid"></div>
+  <div class="detail-panel" id="detailPanel">
+    <h3 id="detailTitle" style="color:var(--color-text-primary)">请点击上方维度卡片查看评分细则</h3>
+    <div id="detailBody"></div>
+  </div>
+
+  <div class="time-section">
+    <h3>每题时间限制</h3>
+    <div class="time-grid">
+      <div class="time-card">
+        <div class="tc-label">填空题</div>
+        <div class="tc-limit" style="color:#185FA5">1 分钟 / 题</div>
+        <div class="tc-desc">答案简短、无需复杂推导。超时视为本题未作答，正确率与过程分均清零。</div>
+        <div class="tc-bar" style="background:#B5D4F4"></div>
+      </div>
+      <div class="time-card">
+        <div class="tc-label">计算题</div>
+        <div class="tc-limit" style="color:#0F6E56">3 分钟 / 题</div>
+        <div class="tc-desc">含多步符号推导或数值计算，允许多次工具调用。超时视为本题未作答，正确率与过程分均清零。</div>
+        <div class="tc-bar" style="background:#9FE1CB"></div>
+      </div>
+    </div>
+    <div class="overtime-note">
+      <strong>超时处理规则：</strong>超出时限后系统强制中断，本题得 0 分（含正确率 + 过程分）。效率子项"平均响应时间"按<strong>实际用时 / 对应时限</strong>计算达标率，填空题和计算题分开统计后加权平均。
+    </div>
+  </div>
+
+  <div class="diff-section">
+    <h3>验证集难度加权方案（内含于正确率维度）</h3>
+    <div class="diff-row">
+      <div class="diff-badge" style="background:#EAF3DE;color:#3B6D11">基础题</div>
+      <div class="diff-bar-wrap"><div class="diff-bar" style="width:40%;background:#639922"></div></div>
+      <div style="font-size:12px;color:var(--color-text-secondary)">占 40%，×1.0</div>
+      <div style="font-size:11px;color:var(--color-text-secondary)">概念定义、单步计算</div>
+    </div>
+    <div class="diff-row">
+      <div class="diff-badge" style="background:#FAEEDA;color:#633806">中等题</div>
+      <div class="diff-bar-wrap"><div class="diff-bar" style="width:40%;background:#BA7517"></div></div>
+      <div style="font-size:12px;color:var(--color-text-secondary)">占 40%，×1.5</div>
+      <div style="font-size:11px;color:var(--color-text-secondary)">多步推导、多概念联用</div>
+    </div>
+    <div class="diff-row">
+      <div class="diff-badge" style="background:#FCEBEB;color:#A32D2D">困难题</div>
+      <div class="diff-bar-wrap"><div class="diff-bar" style="width:20%;background:#E24B4A"></div></div>
+      <div style="font-size:12px;color:var(--color-text-secondary)">占 20%，×2.5</div>
+      <div style="font-size:11px;color:var(--color-text-secondary)">综合分析、证明、跨科</div>
+    </div>
+  </div>
+
+  <div class="total-row">
+    <span class="total-left">总分（标准化后）</span>
+    <span class="total-right">100 分</span>
+  </div>
+
+  <div class="note-box">
+    <strong>设计原则：</strong>底模统一（K2.5），选手差距体现在知识工程与工具设计上，<strong>过程质量 + 方案设计合计 45 分</strong>，占比超过正确率。数值有误但步骤公式正确可按比例得部分分，体现对推导过程的尊重。时限按题型分级（填空 1 min / 计算 3 min），超时强制清零。
+  </div>
+</div>
+
+<script>
+const dims = [
+  {
+    id: 0,
+    name: "验证集正确率",
+    score: 40,
+    color: "#185FA5",
+    bgLight: "#E6F1FB",
+    sub: "难度加权 · 步骤给分",
+    renderDetail() {
+      return `
+        <div class="sub-items" style="margin-bottom:14px">
+          <div class="sub-item">
+            <div class="sub-score" style="color:#185FA5">×1.0</div>
+            <div class="sub-name">基础题全对</div>
+            <div class="sub-desc">答案精确匹配或等价，数值、单位均正确</div>
+          </div>
+          <div class="sub-item">
+            <div class="sub-score" style="color:#185FA5">×1.5</div>
+            <div class="sub-name">中等题全对</div>
+            <div class="sub-desc">多步推导、需调用多个工具协作完成</div>
+          </div>
+          <div class="sub-item">
+            <div class="sub-score" style="color:#185FA5">×2.5</div>
+            <div class="sub-name">困难题全对</div>
+            <div class="sub-desc">综合分析、跨科推导，仅凭底模难以直接回答</div>
+          </div>
+        </div>
+        <div style="font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px">答案有误时按步骤与公式给分（仅限计算题）</div>
+        <table class="step-table">
+          <thead>
+            <tr>
+              <th style="width:30%">情形</th>
+              <th style="width:20%">得分比例</th>
+              <th>判定说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="badge" style="background:#EAF3DE;color:#3B6D11">公式 + 步骤均正确</span></td>
+              <td style="font-weight:500;color:#185FA5">× 70%</td>
+              <td style="color:var(--color-text-secondary)">建立了正确的物理模型，套用了正确公式，步骤完整，仅因代入数值或化简出错导致最终数值错误</td>
+            </tr>
+            <tr>
+              <td><span class="badge" style="background:#FAEEDA;color:#633806">公式正确，步骤不完整</span></td>
+              <td style="font-weight:500;color:#185FA5">× 40%</td>
+              <td style="color:var(--color-text-secondary)">选用了正确公式，但推导步骤缺失或跳步，无法完整还原解题过程</td>
+            </tr>
+            <tr>
+              <td><span class="badge" style="background:#FCEBEB;color:#A32D2D">公式错误，方向正确</span></td>
+              <td style="font-weight:500;color:#185FA5">× 20%</td>
+              <td style="color:var(--color-text-secondary)">分析思路方向正确（如正确识别了物理量关系），但选用公式有误，导致数值完全错误</td>
+            </tr>
+            <tr>
+              <td><span class="badge" style="background:var(--color-background-secondary);color:var(--color-text-secondary)">方向错误或无过程</span></td>
+              <td style="font-weight:500;color:#E24B4A">× 0%</td>
+              <td style="color:var(--color-text-secondary)">物理模型建立错误，或直接输出错误答案而无任何推导过程</td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top:10px;font-size:11px;color:var(--color-text-secondary);line-height:1.6">
+          填空题不适用步骤给分，答案完全正确得满分，否则得 0 分。步骤给分后再乘以对应难度系数（×1.0 / ×1.5 / ×2.5）。
+        </div>
+      `;
+    }
+  },
+  {
+    id: 1,
+    name: "解题过程质量",
+    score: 25,
+    color: "#0F6E56",
+    bgLight: "#E1F5EE",
+    sub: "推理链 · 工具调用",
+    renderDetail() {
+      return `<div class="sub-items">
+        <div class="sub-item"><div class="sub-score" style="color:#0F6E56">9 分</div><div class="sub-name">推理链完整性</div><div class="sub-desc">Thought-Action-Observation 是否清晰、逻辑是否连贯、有无无效循环</div></div>
+        <div class="sub-item"><div class="sub-score" style="color:#0F6E56">9 分</div><div class="sub-name">工具调用合理性</div><div class="sub-desc">是否选择了正确的工具，调用次数是否经济（不滥用），参数构造是否准确</div></div>
+        <div class="sub-item"><div class="sub-score" style="color:#0F6E56">7 分</div><div class="sub-name">中间步骤正确性</div><div class="sub-desc">即使最终答案有误，中间推导步骤是否体现正确的物理/数学理解</div></div>
+      </div>`;
+    }
+  },
+  {
+    id: 2,
+    name: "方案设计",
+    score: 20,
+    color: "#534AB7",
+    bgLight: "#EEEDFE",
+    sub: "创新 · 工程 · 架构",
+    renderDetail() {
+      return `<div class="sub-items">
+        <div class="sub-item"><div class="sub-score" style="color:#534AB7">8 分</div><div class="sub-name">技术创新性</div><div class="sub-desc">超越 demo 基础的设计：多智能体、自验证、动态工具选择、自适应提示等</div></div>
+        <div class="sub-item"><div class="sub-score" style="color:#534AB7">7 分</div><div class="sub-name">知识库工程质量</div><div class="sub-desc">RAG 切块策略、公式与文字分离处理、检索精度、embedding 选型</div></div>
+        <div class="sub-item"><div class="sub-score" style="color:#534AB7">5 分</div><div class="sub-name">代码质量与可扩展性</div><div class="sub-desc">结构清晰、注释完整、容错处理、易于扩展到新课程</div></div>
+      </div>`;
+    }
+  },
+  {
+    id: 3,
+    name: "效率",
+    score: 10,
+    color: "#854F0B",
+    bgLight: "#FAEEDA",
+    sub: "填空 1min · 计算 3min",
+    renderDetail() {
+      return `<div class="sub-items">
+        <div class="sub-item"><div class="sub-score" style="color:#854F0B">5 分</div><div class="sub-name">平均响应时间</div><div class="sub-desc">填空题时限 1 min，计算题时限 3 min，按实际用时/对应时限计达标率；分题型统计后加权平均，越快得分越高</div></div>
+        <div class="sub-item"><div class="sub-score" style="color:#854F0B">5 分</div><div class="sub-name">工具调用经济性</div><div class="sub-desc">相同正确率下，调用轮次更少得分更高；避免冗余检索和无效重试</div></div>
+      </div>`;
+    }
+  },
+  {
+    id: 4,
+    name: "鲁棒性",
+    score: 5,
+    color: "#993C1D",
+    bgLight: "#FAECE7",
+    sub: "异常处理 · 边界情况",
+    renderDetail() {
+      return `<div class="sub-items">
+        <div class="sub-item"><div class="sub-score" style="color:#993C1D">3 分</div><div class="sub-name">异常与错误处理</div><div class="sub-desc">工具调用失败时能优雅降级，不崩溃；无效输入给出合理提示而非报错</div></div>
+        <div class="sub-item"><div class="sub-score" style="color:#993C1D">2 分</div><div class="sub-name">超纲/歧义题处理</div><div class="sub-desc">遇到验证集外的问题能合理说明局限，而非胡乱输出错误答案</div></div>
+      </div>`;
+    }
+  }
+];
+
+let active = null;
+const grid = document.getElementById('dimGrid');
+const detailTitle = document.getElementById('detailTitle');
+const detailBody = document.getElementById('detailBody');
+
+dims.forEach(d => {
+  const card = document.createElement('div');
+  card.className = 'dim-card';
+  card.id = 'card-' + d.id;
+  card.innerHTML = `
+    <div class="dim-header">
+      <div class="dim-score" style="color:${d.color}">${d.score}</div>
+      <div style="font-size:11px;color:${d.color};margin-top:3px">${d.score}%</div>
+    </div>
+    <div class="dim-name">${d.name}</div>
+    <div class="dim-sub">${d.sub}</div>
+    <div class="bar-track"><div class="bar-fill" style="width:${d.score}%;background:${d.color}"></div></div>
+  `;
+  card.addEventListener('click', () => showDetail(d));
+  grid.appendChild(card);
+});
+
+function showDetail(d) {
+  if (active !== null) {
+    const prev = document.getElementById('card-' + active);
+    prev.classList.remove('active');
+    prev.style.borderColor = '';
+    prev.style.background = '';
+  }
+  active = d.id;
+  const card = document.getElementById('card-' + d.id);
+  card.classList.add('active');
+  card.style.borderColor = d.color;
+  card.style.background = d.bgLight;
+  detailTitle.textContent = d.name + '（' + d.score + ' 分）';
+  detailTitle.style.color = d.color;
+  detailBody.innerHTML = d.renderDetail();
+}
+
+showDetail(dims[0]);
+</script>
